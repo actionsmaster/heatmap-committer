@@ -1,0 +1,45 @@
+name: Rewrite History
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Bun
+      run: |
+        curl -fsSL https://bun.sh/install | bash
+        export BUN_INSTALL="$HOME/.bun"
+        export PATH="$BUN_INSTALL/bin:$PATH"
+        bun --version
+
+    - name: Run Date Generation Script
+      run: |
+        export BUN_INSTALL="$HOME/.bun"
+        export PATH="$BUN_INSTALL/bin:$PATH"
+        bun src/generateDates.ts
+
+    - name: Rewrite commit history
+      run: |
+        git config --global user.name "your-username"
+        git config --global user.email "your-email@example.com"
+        while read -r date; do
+          export GIT_COMMITTER_DATE="$date"
+          export GIT_AUTHOR_DATE="$date"
+          echo "$date" > commit-file.txt
+          git add commit-file.txt
+          git commit -m "Automated commit for $date"
+        done < dates.txt
+
+    - name: Force push changes
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        git push --force https://actionsmaster:${{ secrets.GH_TOKEN }}@github.com/actionsmaster/heatmap-committer.git

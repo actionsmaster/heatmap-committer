@@ -1,0 +1,17 @@
+{
+  "name": "heatmap-committer",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/date-fns": "^2.6.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/node": "^20.12.12",
+    "canvas": "^2.11.2",
+    "date-fns": "^3.6.0"
+  }
+}
